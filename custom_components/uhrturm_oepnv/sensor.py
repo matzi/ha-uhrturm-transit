@@ -6,8 +6,9 @@ from datetime import datetime
 from typing import Any
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
-from homeassistant.const import UnitOfTime
-from homeassistant.core import HomeAssistant
+from homeassistant.const import Platform, UnitOfTime
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .const import CONF_STOP_NAME, SUBENTRY_BOARD, SUBENTRY_COMMUTE
@@ -23,14 +24,13 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up sensors, grouped by subentry."""
+    ent_reg = er.async_get(hass)
     for subentry_id, coordinator in entry.runtime_data.coordinators.items():
         entities: list[SensorEntity] = []
         if coordinator.subentry.subentry_type == SUBENTRY_BOARD:
             assert isinstance(coordinator, BoardCoordinator)
-            entities = [
-                NextDepartureSensor(coordinator, "next_departure", 0),
-                NextDepartureSensor(coordinator, "following_departure", 1),
-            ]
+            entities = [DepartureSensor(coordinator, index) for index in range(coordinator.count)]
+            _remove_surplus_departures(ent_reg, entry, subentry_id, coordinator.count)
         elif coordinator.subentry.subentry_type == SUBENTRY_COMMUTE:
             assert isinstance(coordinator, CommuteCoordinator)
             entities = [
@@ -46,15 +46,36 @@ async def async_setup_entry(
 # --------------------------------------------------------------------------- board
 
 
-class NextDepartureSensor(BoardEntity, SensorEntity):
-    """Next (or following) departure as timestamp."""
+def _departure_key(index: int) -> str:
+    """Unique-id suffix of the departure sensor at 0-based `index`."""
+    return f"departure_{index + 1}"
+
+
+@callback
+def _remove_surplus_departures(
+    ent_reg: er.EntityRegistry, entry: TriasConfigEntry, subentry_id: str, count: int
+) -> None:
+    """Drop departure sensors left over from a higher configured count."""
+    prefix = f"{subentry_id}_departure_"
+    for reg_entry in er.async_entries_for_config_entry(ent_reg, entry.entry_id):
+        if reg_entry.domain != Platform.SENSOR or not reg_entry.unique_id.startswith(prefix):
+            continue
+        suffix = reg_entry.unique_id.removeprefix(prefix)
+        if suffix.isdigit() and int(suffix) > count:
+            ent_reg.async_remove(reg_entry.entity_id)
+
+
+class DepartureSensor(BoardEntity, SensorEntity):
+    """N-th upcoming (not cancelled) departure as timestamp."""
 
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _unrecorded_attributes = frozenset({"departures"})
 
-    def __init__(self, coordinator: BoardCoordinator, key: str, index: int) -> None:
+    def __init__(self, coordinator: BoardCoordinator, index: int) -> None:
         """Initialize."""
-        super().__init__(coordinator, key)
+        super().__init__(coordinator, _departure_key(index))
+        self._attr_translation_key = "board_departure"
+        self._attr_translation_placeholders = {"index": str(index + 1)}
         self._index = index
 
     @property
@@ -68,6 +89,7 @@ class NextDepartureSensor(BoardEntity, SensorEntity):
         """Details; the first sensor also carries the full list."""
         dep = self.next_running(self._index)
         attrs: dict[str, Any] = {
+            "index": self._index + 1,
             "stop": self.coordinator.subentry.data.get(CONF_STOP_NAME),
             "line": dep.service.line if dep else None,
             "destination": dep.service.destination if dep else None,

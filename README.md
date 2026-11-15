@@ -69,9 +69,15 @@ dominated connections (another one leaves later and arrives no later) are droppe
 
 | Entity | State | Attributes |
 |---|---|---|
-| `sensor.<board>_next_departure` | timestamp (real-time) | `line`, `destination`, `delay`, `platform`, `planned`, `realtime`, `departures` (list) |
-| `sensor.<board>_following_departure` | timestamp | same, without list |
+| `sensor.<board>_departure_1` | timestamp (real-time) of the next departure | `index`, `line`, `destination`, `delay`, `platform`, `planned`, `realtime`, `departures` (list) |
+| `sensor.<board>_departure_2` … `_departure_<n>` | timestamp of the 2nd … n-th departure | same, without list |
 | `binary_sensor.<board>_disruption` | on if a shown departure is cancelled or late | `affected` |
+
+*Number of departures* in the board settings sets n (1–20, default 5). Cancelled
+vehicles are skipped by the numbered sensors (they still appear in `departures` and
+trigger the disruption sensor). Lowering n removes the surplus sensors. Boards created
+before this version keep their `…_next_departure` / `…_following_departure` entity IDs
+for departure 1 and 2.
 
 **Commute**
 
@@ -95,7 +101,7 @@ Outside the time window the commute sensors are `unknown`. The large list attrib
 type: markdown
 title: Uni/Mozartgasse → Hbf
 content: >
-  {% set s = 'sensor.mozartgasse_hbf_next_departure' %}
+  {% set s = 'sensor.mozartgasse_hbf_departure_1' %}
   | | Linie | Ziel | |
   |---|---|---|---|
   {% for d in state_attr(s, 'departures') or [] -%}

@@ -76,6 +76,7 @@
             "towards_query": "Only show vehicles that stop here later on. Searched by name, you pick the stop in the next step. Leave empty for all directions.",
             "lines": "Comma-separated line names, e.g. 58, S1. Empty = all lines.",
             "direction_ref": "Optional DirectionRef as sent by the provider (e.g. inward/outward). Defined per line, so combine it with lines.",
+            "count": "Creates one sensor per departure (Departure 1 … n).",
             "min_minutes": "Departures you cannot reach anymore are hidden.",
             "delay_threshold": "Delay that switches the disruption sensor on.",
             "scan_interval": "Polling interval in seconds. Polls less often while nothing leaves within 30 minutes."
@@ -191,11 +192,8 @@
       }
     },
     "sensor": {
-      "next_departure": {
-        "name": "Next departure"
-      },
-      "following_departure": {
-        "name": "Following departure"
+      "board_departure": {
+        "name": "Departure {index}"
       },
       "leave_at": {
         "name": "Leave at"

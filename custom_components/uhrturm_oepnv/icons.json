@@ -6,10 +6,7 @@
       }
     },
     "sensor": {
-      "next_departure": {
-        "default": "mdi:bus-clock"
-      },
-      "following_departure": {
+      "board_departure": {
         "default": "mdi:bus-clock"
       },
       "leave_at": {

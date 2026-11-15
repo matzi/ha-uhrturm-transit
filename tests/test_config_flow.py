@@ -110,6 +110,7 @@ async def test_reauth(hass: HomeAssistant, config_entry, mock_trias) -> None:
     assert result["type"] is FlowResultType.ABORT
     assert result["reason"] == "reauth_successful"
     assert config_entry.data[CONF_REQUESTOR_REF] == "new-key"
+    await hass.async_block_till_done()  # let the entry reload finish
 
 
 async def test_reconfigure(hass: HomeAssistant, config_entry, mock_trias) -> None:
@@ -123,6 +124,7 @@ async def test_reconfigure(hass: HomeAssistant, config_entry, mock_trias) -> Non
     assert result["type"] is FlowResultType.ABORT
     assert result["reason"] == "reconfigure_successful"
     assert config_entry.data[CONF_REQUESTOR_REF] == "other"
+    await hass.async_block_till_done()  # let the entry reload finish
 
 
 async def _start_subflow(hass: HomeAssistant, entry, subentry_type: str):

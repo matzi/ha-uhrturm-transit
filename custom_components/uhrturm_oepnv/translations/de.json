@@ -76,6 +76,7 @@
             "towards_query": "Nur Fahrzeuge anzeigen, die später hier halten. Suche nach Name, die Haltestelle wählst du im nächsten Schritt. Leer = alle Richtungen.",
             "lines": "Liniennamen mit Komma getrennt, z. B. 58, S1. Leer = alle Linien.",
             "direction_ref": "Optionale DirectionRef, wie vom Anbieter geliefert (z. B. inward/outward). Gilt pro Linie, daher mit Linien kombinieren.",
+            "count": "Legt pro Abfahrt einen Sensor an (Abfahrt 1 … n).",
             "min_minutes": "Abfahrten, die du nicht mehr erreichst, werden ausgeblendet.",
             "delay_threshold": "Ab dieser Verspätung schaltet der Störungs-Sensor ein.",
             "scan_interval": "Abfrageintervall in Sekunden. Seltener, solange in den nächsten 30 Minuten nichts fährt."
@@ -191,11 +192,8 @@
       }
     },
     "sensor": {
-      "next_departure": {
-        "name": "Nächste Abfahrt"
-      },
-      "following_departure": {
-        "name": "Übernächste Abfahrt"
+      "board_departure": {
+        "name": "Abfahrt {index}"
       },
       "leave_at": {
         "name": "Losgehen um"

@@ -47,23 +47,30 @@ class TriasEntity[C: (BoardCoordinator, CommuteCoordinator)](CoordinatorEntity[C
 class BoardEntity(TriasEntity[BoardCoordinator]):
     """Entity of a departure board."""
 
-    def upcoming(self) -> list[Departure]:
-        """Departures that can still be reached, limited to the configured count."""
+    def _reachable(self) -> list[Departure]:
+        """All fetched departures that can still be reached."""
         if self.coordinator.data is None:
             return []
         limit = dt_util.now().replace(second=0, microsecond=0) + timedelta(
             minutes=self.coordinator.min_minutes
         )
-        deps = [
+        return [
             d
             for d in self.coordinator.data.departures
             if d.call.time is not None and d.call.time >= limit
         ]
-        return deps[: self.coordinator.count]
+
+    def upcoming(self) -> list[Departure]:
+        """Departures that can still be reached, limited to the configured count."""
+        return self._reachable()[: self.coordinator.count]
 
     def next_running(self, index: int = 0) -> Departure | None:
-        """N-th upcoming departure that is not cancelled."""
-        running = [d for d in self.upcoming() if not d.service.cancelled]
+        """N-th reachable departure that is not cancelled (0-based).
+
+        Not limited to the configured count, so a cancellation does not leave
+        the last departure sensor empty while more departures were fetched.
+        """
+        running = [d for d in self._reachable() if not d.service.cancelled]
         return running[index] if len(running) > index else None
 
 

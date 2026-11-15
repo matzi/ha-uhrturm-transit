@@ -5,8 +5,8 @@ from __future__ import annotations
 import asyncio
 
 from homeassistant.const import CONF_URL, Platform
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers import config_validation as cv
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import config_validation as cv, entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
@@ -38,6 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: TriasConfigEntry) -> boo
         entry.data[CONF_URL],
         entry.data.get(CONF_REQUESTOR_REF, ""),
     )
+    _migrate_departure_unique_ids(hass, entry)
     runtime = TriasRuntimeData(client=client)
     for subentry in entry.subentries.values():
         if subentry.subentry_type == SUBENTRY_BOARD:
@@ -58,6 +59,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: TriasConfigEntry) -> boo
     # adding/removing/editing subentries triggers a reload
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True
+
+
+# old fixed board sensors -> numbered departure sensors (entity ids are kept)
+_LEGACY_DEPARTURE_KEYS = {"next_departure": "departure_1", "following_departure": "departure_2"}
+
+
+@callback
+def _migrate_departure_unique_ids(hass: HomeAssistant, entry: TriasConfigEntry) -> None:
+    ent_reg = er.async_get(hass)
+    for reg_entry in er.async_entries_for_config_entry(ent_reg, entry.entry_id):
+        if reg_entry.domain != Platform.SENSOR:
+            continue
+        for old, new in _LEGACY_DEPARTURE_KEYS.items():
+            if not reg_entry.unique_id.endswith(f"_{old}"):
+                continue
+            new_unique_id = reg_entry.unique_id.removesuffix(old) + new
+            if ent_reg.async_get_entity_id(Platform.SENSOR, DOMAIN, new_unique_id):
+                ent_reg.async_remove(reg_entry.entity_id)  # target exists already
+            else:
+                ent_reg.async_update_entity(reg_entry.entity_id, new_unique_id=new_unique_id)
+            break
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: TriasConfigEntry) -> bool:
