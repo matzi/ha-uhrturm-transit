@@ -1,0 +1,310 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "TRIAS-Schnittstelle",
+        "description": "Gib die TRIAS-Schnittstelle (VDV 431-2) deines Verkehrsverbunds an. Abfahrtstafeln und Pendelstrecken fügst du danach auf der Seite der Integration hinzu.",
+        "data": {
+          "url": "URL",
+          "requestor_ref": "Requestor-Ref / API-Key"
+        },
+        "data_description": {
+          "url": "Vollständige URL des TRIAS-Dienstes, wie vom Anbieter angegeben.",
+          "requestor_ref": "Wird als siri:RequestorRef gesendet. Leer lassen, wenn der Anbieter keinen braucht."
+        }
+      },
+      "reauth_confirm": {
+        "title": "API-Key aktualisieren",
+        "description": "Der Anbieter hat die Anfragen an {url} abgelehnt. Gib einen gültigen Requestor-Ref / API-Key ein.",
+        "data": {
+          "requestor_ref": "Requestor-Ref / API-Key"
+        }
+      },
+      "reconfigure": {
+        "title": "TRIAS-Schnittstelle ändern",
+        "data": {
+          "url": "URL",
+          "requestor_ref": "Requestor-Ref / API-Key"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zur Schnittstelle fehlgeschlagen.",
+      "invalid_auth": "Die Schnittstelle hat die Zugangsdaten abgelehnt.",
+      "invalid_response": "Die Schnittstelle antwortet nicht mit TRIAS-XML. URL prüfen.",
+      "unknown": "Unerwarteter Fehler."
+    },
+    "abort": {
+      "already_configured": "Diese Schnittstelle ist bereits eingerichtet.",
+      "reauth_successful": "Erneute Anmeldung erfolgreich.",
+      "reconfigure_successful": "Änderung gespeichert."
+    }
+  },
+  "config_subentries": {
+    "departure_board": {
+      "entry_type": "Abfahrtstafel",
+      "initiate_flow": {
+        "user": "Abfahrtstafel hinzufügen",
+        "reconfigure": "Abfahrtstafel bearbeiten"
+      },
+      "step": {
+        "user": {
+          "title": "Haltestelle suchen",
+          "data": {
+            "query": "Name der Haltestelle"
+          }
+        },
+        "select_stop": {
+          "title": "Haltestelle auswählen",
+          "data": {
+            "stop_ref": "Haltestelle"
+          }
+        },
+        "filters": {
+          "title": "Abfahrten ab {stop}",
+          "data": {
+            "name": "Name",
+            "towards_query": "Richtung (Haltestelle)",
+            "lines": "Linien",
+            "direction_ref": "Direction-Ref",
+            "count": "Anzahl Abfahrten",
+            "min_minutes": "Gehzeit zur Haltestelle",
+            "delay_threshold": "Schwelle für Störung",
+            "scan_interval": "Aktualisierungsintervall"
+          },
+          "data_description": {
+            "towards_query": "Nur Fahrzeuge anzeigen, die später hier halten. Suche nach Name, die Haltestelle wählst du im nächsten Schritt. Leer = alle Richtungen.",
+            "lines": "Liniennamen mit Komma getrennt, z. B. 58, S1. Leer = alle Linien.",
+            "direction_ref": "Optionale DirectionRef, wie vom Anbieter geliefert (z. B. inward/outward). Gilt pro Linie, daher mit Linien kombinieren.",
+            "min_minutes": "Abfahrten, die du nicht mehr erreichst, werden ausgeblendet.",
+            "delay_threshold": "Ab dieser Verspätung schaltet der Störungs-Sensor ein.",
+            "scan_interval": "Abfrageintervall in Sekunden. Seltener, solange in den nächsten 30 Minuten nichts fährt."
+          }
+        },
+        "select_towards": {
+          "title": "Richtung auswählen",
+          "description": "Wähle die Haltestelle, an der die Fahrzeuge vorbeikommen müssen. Der Eintrag mit (*) trifft auf alle Haltestellen zu, deren Name „{query}“ enthält.",
+          "data": {
+            "towards_ref": "Richtung"
+          }
+        }
+      },
+      "error": {
+        "cannot_connect": "Verbindung zur Schnittstelle fehlgeschlagen.",
+        "no_stops_found": "Keine Haltestellen gefunden."
+      },
+      "abort": {
+        "entry_not_loaded": "Die TRIAS-Schnittstelle ist nicht geladen. Behebe das zuerst.",
+        "reconfigure_successful": "Änderung gespeichert."
+      }
+    },
+    "commute": {
+      "entry_type": "Pendelstrecke",
+      "initiate_flow": {
+        "user": "Pendelstrecke hinzufügen",
+        "reconfigure": "Pendelstrecke bearbeiten"
+      },
+      "step": {
+        "station_search": {
+          "title": "Startstation suchen",
+          "description": "Bisher hinzugefügt: {stations}",
+          "data": {
+            "query": "Name der Station"
+          }
+        },
+        "station_select": {
+          "title": "Startstation auswählen",
+          "data": {
+            "ref": "Station",
+            "walk_min": "Gehzeit von zu Hause"
+          }
+        },
+        "station_menu": {
+          "title": "Startstationen",
+          "description": "Stationen: {stations}",
+          "menu_options": {
+            "station_search": "Weitere Station hinzufügen",
+            "destination_search": "Weiter zum Ziel"
+          }
+        },
+        "destination_search": {
+          "title": "Ziel suchen",
+          "data": {
+            "query": "Name der Haltestelle"
+          }
+        },
+        "destination_select": {
+          "title": "Ziel auswählen",
+          "data": {
+            "ref": "Haltestelle",
+            "walk_min": "Gehzeit ab Haltestelle"
+          }
+        },
+        "settings": {
+          "title": "Einstellungen",
+          "description": "Stationen: {stations}\nZiel: {destination}",
+          "data": {
+            "name": "Name",
+            "weekdays": "Wochentage",
+            "start_time": "Aktiv ab",
+            "end_time": "Aktiv bis",
+            "scan_interval": "Aktualisierungsintervall",
+            "count": "Anzahl Verbindungen",
+            "delay_threshold": "Schwelle für Störung"
+          },
+          "data_description": {
+            "start_time": "Verbindungen werden nur in diesem Zeitfenster abgefragt, außerhalb sind die Sensoren unbekannt.",
+            "scan_interval": "Abfrageintervall in Minuten innerhalb des Zeitfensters.",
+            "delay_threshold": "Ab dieser Verspätung schaltet der Störungs-Sensor ein."
+          }
+        }
+      },
+      "error": {
+        "cannot_connect": "Verbindung zur Schnittstelle fehlgeschlagen.",
+        "no_stops_found": "Keine Haltestellen gefunden.",
+        "no_weekdays": "Mindestens einen Wochentag auswählen.",
+        "empty_window": "Start- und Endzeit müssen sich unterscheiden."
+      },
+      "abort": {
+        "entry_not_loaded": "Die TRIAS-Schnittstelle ist nicht geladen. Behebe das zuerst.",
+        "reconfigure_successful": "Änderung gespeichert."
+      }
+    }
+  },
+  "selector": {
+    "weekdays": {
+      "options": {
+        "mon": "Montag",
+        "tue": "Dienstag",
+        "wed": "Mittwoch",
+        "thu": "Donnerstag",
+        "fri": "Freitag",
+        "sat": "Samstag",
+        "sun": "Sonntag"
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "disruption": {
+        "name": "Störung"
+      }
+    },
+    "sensor": {
+      "next_departure": {
+        "name": "Nächste Abfahrt"
+      },
+      "following_departure": {
+        "name": "Übernächste Abfahrt"
+      },
+      "leave_at": {
+        "name": "Losgehen um"
+      },
+      "station": {
+        "name": "Station"
+      },
+      "departure": {
+        "name": "Abfahrt"
+      },
+      "arrival": {
+        "name": "Ankunft"
+      },
+      "delay": {
+        "name": "Verspätung"
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "Die TRIAS-Schnittstelle hat die Zugangsdaten abgelehnt."
+    },
+    "update_failed": {
+      "message": "TRIAS-Anfrage fehlgeschlagen: {error}"
+    },
+    "entry_not_found": {
+      "message": "TRIAS-Eintrag {entry_id} nicht gefunden."
+    },
+    "entry_not_loaded": {
+      "message": "TRIAS-Schnittstelle {title} ist nicht geladen."
+    },
+    "request_failed": {
+      "message": "TRIAS-Anfrage fehlgeschlagen: {error}"
+    }
+  },
+  "services": {
+    "search_stops": {
+      "name": "Haltestellen suchen",
+      "description": "Sucht Haltestellen nach Namen und liefert ihre IDs.",
+      "fields": {
+        "config_entry_id": {
+          "name": "TRIAS-Schnittstelle",
+          "description": "Die abzufragende Schnittstelle."
+        },
+        "query": {
+          "name": "Suchbegriff",
+          "description": "Name oder Teil des Namens."
+        },
+        "count": {
+          "name": "Anzahl",
+          "description": "Maximale Anzahl Treffer."
+        }
+      }
+    },
+    "get_departures": {
+      "name": "Abfahrten abrufen",
+      "description": "Liefert die nächsten Abfahrten an einer Haltestelle.",
+      "fields": {
+        "config_entry_id": {
+          "name": "TRIAS-Schnittstelle",
+          "description": "Die abzufragende Schnittstelle."
+        },
+        "stop": {
+          "name": "Haltestelle",
+          "description": "Haltestellen-ID."
+        },
+        "towards": {
+          "name": "Richtung",
+          "description": "Nur Fahrzeuge, die später hier halten: Haltestellen-ID oder Teil eines Namens."
+        },
+        "lines": {
+          "name": "Linien",
+          "description": "Nur diese Liniennamen."
+        },
+        "count": {
+          "name": "Anzahl",
+          "description": "Maximale Anzahl Abfahrten."
+        },
+        "time": {
+          "name": "Zeitpunkt",
+          "description": "Startzeit, Standard ist jetzt."
+        }
+      }
+    },
+    "plan_trip": {
+      "name": "Verbindung suchen",
+      "description": "Liefert Verbindungen zwischen zwei Haltestellen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "TRIAS-Schnittstelle",
+          "description": "Die abzufragende Schnittstelle."
+        },
+        "origin": {
+          "name": "Start",
+          "description": "Haltestellen-ID oder geo:LAT,LON."
+        },
+        "destination": {
+          "name": "Ziel",
+          "description": "Haltestellen-ID oder geo:LAT,LON."
+        },
+        "time": {
+          "name": "Abfahrtszeit",
+          "description": "Standard ist jetzt."
+        },
+        "count": {
+          "name": "Anzahl",
+          "description": "Anzahl Verbindungen."
+        }
+      }
+    }
+  }
+}

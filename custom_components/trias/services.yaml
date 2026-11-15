@@ -1,0 +1,79 @@
+search_stops:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: trias
+    query:
+      required: true
+      example: "Hauptbahnhof"
+      selector:
+        text:
+    count:
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 50
+          mode: box
+
+get_departures:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: trias
+    stop:
+      required: true
+      example: "at:46:4131"
+      selector:
+        text:
+    towards:
+      example: "Hauptbahnhof"
+      selector:
+        text:
+    lines:
+      example: "58"
+      selector:
+        text:
+          multiple: true
+    count:
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 50
+          mode: box
+    time:
+      selector:
+        datetime:
+
+plan_trip:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: trias
+    origin:
+      required: true
+      example: "at:46:4131"
+      selector:
+        text:
+    destination:
+      required: true
+      example: "at:46:2000"
+      selector:
+        text:
+    time:
+      selector:
+        datetime:
+    count:
+      default: 5
+      selector:
+        number:
+          min: 1
+          max: 20
+          mode: box

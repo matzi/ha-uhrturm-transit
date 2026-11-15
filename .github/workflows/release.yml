@@ -1,0 +1,24 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check manifest version matches tag
+        run: |
+          v=$(jq -r .version custom_components/trias/manifest.json)
+          test "v$v" = "${GITHUB_REF_NAME}" || test "$v" = "${GITHUB_REF_NAME}" \
+            || { echo "manifest version $v != tag ${GITHUB_REF_NAME}"; exit 1; }
+      - name: Zip integration
+        run: cd custom_components/trias && zip -r ../../trias.zip . -x '__pycache__/*'
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: trias.zip

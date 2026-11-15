@@ -1,0 +1,11 @@
+{
+  "home": [
+    { "name": "Station A", "ref": "at:42:1001", "walk_min": 4 },
+    { "name": "Station B", "ref": "at:42:1002", "walk_min": 7 },
+    { "name": "Station C", "ref": "at:42:1003", "walk_min": 11 }
+  ],
+  "work": [
+    { "name": "Work stop", "ref": "at:42:2000", "walk_min": 3 }
+  ],
+  "home_coords": null
+}

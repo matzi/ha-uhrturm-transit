@@ -1,0 +1,310 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "TRIAS endpoint",
+        "description": "Enter the TRIAS (VDV 431-2) endpoint of your transit provider. Departure boards and commutes are added afterwards on the integration page.",
+        "data": {
+          "url": "URL",
+          "requestor_ref": "Requestor ref / API key"
+        },
+        "data_description": {
+          "url": "Full URL of the TRIAS service as given by your provider.",
+          "requestor_ref": "Sent as siri:RequestorRef. Leave empty if your provider does not need one."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Update API key",
+        "description": "The provider rejected the requests to {url}. Enter a valid requestor ref / API key.",
+        "data": {
+          "requestor_ref": "Requestor ref / API key"
+        }
+      },
+      "reconfigure": {
+        "title": "Change TRIAS endpoint",
+        "data": {
+          "url": "URL",
+          "requestor_ref": "Requestor ref / API key"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the endpoint.",
+      "invalid_auth": "The endpoint rejected the credentials.",
+      "invalid_response": "The endpoint did not answer with TRIAS XML. Check the URL.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This endpoint is already configured.",
+      "reauth_successful": "Re-authentication was successful.",
+      "reconfigure_successful": "Reconfiguration was successful."
+    }
+  },
+  "config_subentries": {
+    "departure_board": {
+      "entry_type": "Departure board",
+      "initiate_flow": {
+        "user": "Add departure board",
+        "reconfigure": "Edit departure board"
+      },
+      "step": {
+        "user": {
+          "title": "Find stop",
+          "data": {
+            "query": "Stop name"
+          }
+        },
+        "select_stop": {
+          "title": "Select stop",
+          "data": {
+            "stop_ref": "Stop"
+          }
+        },
+        "filters": {
+          "title": "Departures from {stop}",
+          "data": {
+            "name": "Name",
+            "towards_query": "Towards (stop)",
+            "lines": "Lines",
+            "direction_ref": "Direction ref",
+            "count": "Number of departures",
+            "min_minutes": "Walking time to the stop",
+            "delay_threshold": "Disruption threshold",
+            "scan_interval": "Update interval"
+          },
+          "data_description": {
+            "towards_query": "Only show vehicles that stop here later on. Searched by name, you pick the stop in the next step. Leave empty for all directions.",
+            "lines": "Comma-separated line names, e.g. 58, S1. Empty = all lines.",
+            "direction_ref": "Optional DirectionRef as sent by the provider (e.g. inward/outward). Defined per line, so combine it with lines.",
+            "min_minutes": "Departures you cannot reach anymore are hidden.",
+            "delay_threshold": "Delay that switches the disruption sensor on.",
+            "scan_interval": "Polling interval in seconds. Polls less often while nothing leaves within 30 minutes."
+          }
+        },
+        "select_towards": {
+          "title": "Select direction",
+          "description": "Pick the stop the vehicles have to pass. The entry marked (*) matches every stop whose name contains \"{query}\".",
+          "data": {
+            "towards_ref": "Towards"
+          }
+        }
+      },
+      "error": {
+        "cannot_connect": "Failed to connect to the endpoint.",
+        "no_stops_found": "No stops found."
+      },
+      "abort": {
+        "entry_not_loaded": "The TRIAS endpoint is not loaded. Fix it first.",
+        "reconfigure_successful": "Reconfiguration was successful."
+      }
+    },
+    "commute": {
+      "entry_type": "Commute",
+      "initiate_flow": {
+        "user": "Add commute",
+        "reconfigure": "Edit commute"
+      },
+      "step": {
+        "station_search": {
+          "title": "Find home station",
+          "description": "Stations added so far: {stations}",
+          "data": {
+            "query": "Station name"
+          }
+        },
+        "station_select": {
+          "title": "Select home station",
+          "data": {
+            "ref": "Station",
+            "walk_min": "Walking time from home"
+          }
+        },
+        "station_menu": {
+          "title": "Home stations",
+          "description": "Stations: {stations}",
+          "menu_options": {
+            "station_search": "Add another station",
+            "destination_search": "Continue with the destination"
+          }
+        },
+        "destination_search": {
+          "title": "Find destination",
+          "data": {
+            "query": "Stop name"
+          }
+        },
+        "destination_select": {
+          "title": "Select destination",
+          "data": {
+            "ref": "Stop",
+            "walk_min": "Walking time from the stop"
+          }
+        },
+        "settings": {
+          "title": "Commute settings",
+          "description": "Stations: {stations}\nDestination: {destination}",
+          "data": {
+            "name": "Name",
+            "weekdays": "Weekdays",
+            "start_time": "Active from",
+            "end_time": "Active until",
+            "scan_interval": "Update interval",
+            "count": "Number of connections",
+            "delay_threshold": "Disruption threshold"
+          },
+          "data_description": {
+            "start_time": "Connections are only queried inside this time window, outside the sensors are unknown.",
+            "scan_interval": "Polling interval in minutes inside the time window.",
+            "delay_threshold": "Delay that switches the disruption sensor on."
+          }
+        }
+      },
+      "error": {
+        "cannot_connect": "Failed to connect to the endpoint.",
+        "no_stops_found": "No stops found.",
+        "no_weekdays": "Select at least one weekday.",
+        "empty_window": "Start and end time must differ."
+      },
+      "abort": {
+        "entry_not_loaded": "The TRIAS endpoint is not loaded. Fix it first.",
+        "reconfigure_successful": "Reconfiguration was successful."
+      }
+    }
+  },
+  "selector": {
+    "weekdays": {
+      "options": {
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday",
+        "sun": "Sunday"
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "disruption": {
+        "name": "Disruption"
+      }
+    },
+    "sensor": {
+      "next_departure": {
+        "name": "Next departure"
+      },
+      "following_departure": {
+        "name": "Following departure"
+      },
+      "leave_at": {
+        "name": "Leave at"
+      },
+      "station": {
+        "name": "Station"
+      },
+      "departure": {
+        "name": "Departure"
+      },
+      "arrival": {
+        "name": "Arrival"
+      },
+      "delay": {
+        "name": "Delay"
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "The TRIAS endpoint rejected the credentials."
+    },
+    "update_failed": {
+      "message": "TRIAS request failed: {error}"
+    },
+    "entry_not_found": {
+      "message": "TRIAS config entry {entry_id} not found."
+    },
+    "entry_not_loaded": {
+      "message": "TRIAS endpoint {title} is not loaded."
+    },
+    "request_failed": {
+      "message": "TRIAS request failed: {error}"
+    }
+  },
+  "services": {
+    "search_stops": {
+      "name": "Search stops",
+      "description": "Finds stops by name and returns their IDs.",
+      "fields": {
+        "config_entry_id": {
+          "name": "TRIAS endpoint",
+          "description": "The endpoint to query."
+        },
+        "query": {
+          "name": "Query",
+          "description": "Stop name or part of it."
+        },
+        "count": {
+          "name": "Count",
+          "description": "Maximum number of results."
+        }
+      }
+    },
+    "get_departures": {
+      "name": "Get departures",
+      "description": "Returns the next departures at a stop.",
+      "fields": {
+        "config_entry_id": {
+          "name": "TRIAS endpoint",
+          "description": "The endpoint to query."
+        },
+        "stop": {
+          "name": "Stop",
+          "description": "Stop ID."
+        },
+        "towards": {
+          "name": "Towards",
+          "description": "Only vehicles that stop here later on: stop ID or part of a stop name."
+        },
+        "lines": {
+          "name": "Lines",
+          "description": "Only these line names."
+        },
+        "count": {
+          "name": "Count",
+          "description": "Maximum number of departures."
+        },
+        "time": {
+          "name": "Time",
+          "description": "Start time, default now."
+        }
+      }
+    },
+    "plan_trip": {
+      "name": "Plan trip",
+      "description": "Returns connections between two stops.",
+      "fields": {
+        "config_entry_id": {
+          "name": "TRIAS endpoint",
+          "description": "The endpoint to query."
+        },
+        "origin": {
+          "name": "Origin",
+          "description": "Stop ID, or geo:LAT,LON."
+        },
+        "destination": {
+          "name": "Destination",
+          "description": "Stop ID, or geo:LAT,LON."
+        },
+        "time": {
+          "name": "Departure time",
+          "description": "Default now."
+        },
+        "count": {
+          "name": "Count",
+          "description": "Number of connections."
+        }
+      }
+    }
+  }
+}
