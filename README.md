@@ -1,8 +1,13 @@
-# TRIAS Public Transport for Home Assistant
+# Uhrturm Transit (TRIAS) for Home Assistant
 
 Departure boards and "when do I have to leave?" for any public transport provider
 that offers a **TRIAS** (VDV 431-2) interface, e.g. Austrian and German transport
 associations using EFA.
+
+Named after Graz's iconic clock tower, this integration was built and tested for
+**Graz and Steiermark (Verkehrsverbund Steiermark / Verbundlinie)**, but works
+out of the box with **any TRIAS-compatible API endpoint** across Austria, Germany,
+and Switzerland.
 
 - **Departure boards** with a real *direction* filter: only vehicles that later stop at
   a chosen stop ("towards Hauptbahnhof"), optionally limited to lines.
@@ -20,7 +25,7 @@ associations using EFA.
 
 1. HACS → ⋮ → *Custom repositories* → add `https://github.com/your-github-user/ha-trias`,
    category *Integration*.
-2. Install *TRIAS Public Transport*, restart Home Assistant.
+2. Install *Uhrturm Transit (TRIAS)*, restart Home Assistant.
 
 ### Manual
 
@@ -30,7 +35,7 @@ Requires Home Assistant 2026.1 or newer.
 
 ## Setup
 
-1. *Settings → Devices & services → Add integration → TRIAS Public Transport.*
+1. *Settings → Devices & services → Add integration → Uhrturm Transit (TRIAS).*
    Enter the endpoint URL and your requestor ref / API key from your provider.
 2. On the integration page add as many **departure boards** and **commutes** as you
    like (buttons *Add departure board* / *Add commute*). Every one becomes a device.
