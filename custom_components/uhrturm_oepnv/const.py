@@ -60,3 +60,7 @@ FETCH_MIN: Final = 20
 FETCH_MAX: Final = 60
 
 ATTR_CONFIG_ENTRY_ID: Final = "config_entry_id"
+
+# dashboard card shipped with the integration
+CARD_URL_PATH: Final = f"/{DOMAIN}"
+CARD_FILENAME: Final = "uhrturm-departures-card.js"

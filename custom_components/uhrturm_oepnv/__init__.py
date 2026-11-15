@@ -3,15 +3,26 @@
 from __future__ import annotations
 
 import asyncio
+from pathlib import Path
 
+from homeassistant.components.frontend import add_extra_js_url
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.const import CONF_URL, Platform
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv, entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
+from homeassistant.loader import async_get_integration
 
 from .api import TriasClient
-from .const import CONF_REQUESTOR_REF, DOMAIN, SUBENTRY_BOARD, SUBENTRY_COMMUTE
+from .const import (
+    CARD_FILENAME,
+    CARD_URL_PATH,
+    CONF_REQUESTOR_REF,
+    DOMAIN,
+    SUBENTRY_BOARD,
+    SUBENTRY_COMMUTE,
+)
 from .coordinator import (
     BoardCoordinator,
     CommuteCoordinator,
@@ -26,9 +37,21 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Set up the integration (actions)."""
+    """Set up the integration (actions, dashboard card)."""
     async_setup_services(hass)
+    await _async_register_card(hass)
     return True
+
+
+async def _async_register_card(hass: HomeAssistant) -> None:
+    """Serve the departure card and load it in the frontend (no manual resource needed)."""
+    if hass.http is None or "frontend" not in hass.config.components:
+        return  # e.g. tests or a setup without the web UI
+    await hass.http.async_register_static_paths(
+        [StaticPathConfig(CARD_URL_PATH, str(Path(__file__).parent / "frontend"), False)]
+    )
+    version = (await async_get_integration(hass, DOMAIN)).version
+    add_extra_js_url(hass, f"{CARD_URL_PATH}/{CARD_FILENAME}?v={version}")
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: TriasConfigEntry) -> bool:

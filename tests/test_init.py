@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from datetime import timedelta
 from http import HTTPStatus
+from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from freezegun.api import FrozenDateTimeFactory
 import pytest
@@ -15,6 +17,7 @@ from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntryState
 from homeassistant.const import STATE_OFF, STATE_ON, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.setup import async_setup_component
 
 from custom_components.uhrturm_oepnv.const import DOMAIN
 
@@ -268,3 +271,17 @@ async def test_lower_count_removes_departure_sensors(
     assert ent_reg.async_get_entity_id("sensor", DOMAIN, f"{sub.subentry_id}_departure_1")
     assert ent_reg.async_get_entity_id("sensor", DOMAIN, f"{sub.subentry_id}_departure_2") is None
     assert ent_reg.async_get_entity_id("sensor", DOMAIN, f"{sub.subentry_id}_departure_3") is None
+
+
+async def test_card_registered(hass: HomeAssistant) -> None:
+    """The dashboard card is served and loaded in the frontend."""
+    hass.http = MagicMock(async_register_static_paths=AsyncMock())
+    hass.config.components.add("frontend")
+    with patch("custom_components.uhrturm_oepnv.add_extra_js_url") as add_js:
+        assert await async_setup_component(hass, DOMAIN, {})
+
+    (paths,), _ = hass.http.async_register_static_paths.call_args
+    assert paths[0].url_path == "/uhrturm_oepnv"
+    assert (Path(paths[0].path) / "uhrturm-departures-card.js").is_file()
+    add_js.assert_called_once()
+    assert add_js.call_args.args[1].startswith("/uhrturm_oepnv/uhrturm-departures-card.js?v=")

@@ -93,6 +93,25 @@ for departure 1 and 2.
 Outside the time window the commute sensors are `unknown`. The large list attributes
 (`departures`, `connections`) are excluded from the recorder.
 
+## Dashboard card
+
+The integration ships a departure card; it is loaded automatically (no resource to
+add). *Edit dashboard → Add card → Uhrturm departures*, or in YAML:
+
+```yaml
+type: custom:uhrturm-departures-card
+entity: sensor.mozartgasse_hbf_departure_1   # the board's first departure sensor
+title: Mozartgasse → Hbf                     # optional, default: stop name
+hide_cancelled: false                        # optional
+line_colors:                                 # optional, override automatic colours
+  "1": "#e2001a"
+  "58": "#0069b4"
+```
+
+One row per departure: a coloured line badge (each line gets its own colour), the
+destination and the minutes until departure (real-time). Delayed departures are red
+and show the delay (`7 min +2`); cancelled ones are struck through.
+
 ## Examples
 
 ### Dashboard (markdown card)
