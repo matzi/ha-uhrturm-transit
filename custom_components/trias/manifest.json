@@ -1,14 +1,14 @@
 {
-  "domain": "trias",
-  "name": "TRIAS Public Transport",
-  "codeowners": ["@your-github-user"],
+  "domain": "uhrturm_oepnv",
+  "name": "Uhrturm Transit (TRIAS)",
+  "codeowners": ["@matzi"],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/your-github-user/ha-trias",
+  "documentation": "https://github.com/matzi/ha-uhrturm-transit",
   "integration_type": "service",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/your-github-user/ha-trias/issues",
-  "loggers": ["custom_components.trias"],
+  "issue_tracker": "https://github.com/matzi/ha-uhrturm-transit/issues",
+  "loggers": ["custom_components.uhrturm_oepnv"],
   "requirements": [],
   "version": "0.1.0"
 }
