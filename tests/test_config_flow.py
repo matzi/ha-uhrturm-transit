@@ -13,7 +13,7 @@ from homeassistant.const import CONF_NAME, CONF_URL
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
-from custom_components.trias.const import (
+from custom_components.uhrturm_oepnv.const import (
     CONF_COUNT,
     CONF_DELAY_THRESHOLD,
     CONF_DESTINATION,

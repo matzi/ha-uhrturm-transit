@@ -16,7 +16,7 @@ from homeassistant.const import STATE_OFF, STATE_ON, STATE_UNAVAILABLE, STATE_UN
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 
-from custom_components.trias.const import DOMAIN
+from custom_components.uhrturm_oepnv.const import DOMAIN
 
 from .conftest import NOW, URL, fixture, setup_entry
 

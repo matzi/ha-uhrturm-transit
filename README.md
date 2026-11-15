@@ -16,20 +16,20 @@ and Switzerland.
 - Real-time delays, cancellations, a disruption binary sensor per board/commute.
 - Polls only when useful: commutes only inside a time window, boards slow down when
   nothing leaves soon.
-- Actions for ad-hoc queries (`trias.search_stops`, `trias.get_departures`, `trias.plan_trip`).
+- Actions for ad-hoc queries (`uhrturm_oepnv.search_stops`, `uhrturm_oepnv.get_departures`, `uhrturm_oepnv.plan_trip`).
 - UI configuration, English and German.
 
 ## Installation
 
 ### HACS (custom repository)
 
-1. HACS → ⋮ → *Custom repositories* → add `https://github.com/your-github-user/ha-trias`,
+1. HACS → ⋮ → *Custom repositories* → add `https://github.com/matzi/ha-uhrturm-transit`,
    category *Integration*.
 2. Install *Uhrturm Transit (TRIAS)*, restart Home Assistant.
 
 ### Manual
 
-Copy `custom_components/trias` to `<config>/custom_components/trias` and restart.
+Copy `custom_components/uhrturm_oepnv` to `<config>/custom_components/uhrturm_oepnv` and restart.
 
 Requires Home Assistant 2026.1 or newer.
 
@@ -134,7 +134,7 @@ actions:
 ### Actions
 
 ```yaml
-action: trias.get_departures
+action: uhrturm_oepnv.get_departures
 data:
   config_entry_id: <entry id>
   stop: "at:46:4131"
@@ -143,7 +143,7 @@ data:
 response_variable: result
 ```
 
-`trias.search_stops` returns stop IDs for a name, `trias.plan_trip` returns
+`uhrturm_oepnv.search_stops` returns stop IDs for a name, `uhrturm_oepnv.plan_trip` returns
 connections between two stop IDs (or `geo:LAT,LON`).
 
 ## Troubleshooting

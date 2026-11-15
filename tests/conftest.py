@@ -17,7 +17,7 @@ from homeassistant.config_entries import ConfigSubentryData
 from homeassistant.const import CONF_URL
 from homeassistant.core import HomeAssistant
 
-from custom_components.trias.const import (
+from custom_components.uhrturm_oepnv.const import (
     CONF_COUNT,
     CONF_DELAY_THRESHOLD,
     CONF_DESTINATION,

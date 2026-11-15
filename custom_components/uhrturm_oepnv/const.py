@@ -1,11 +1,11 @@
-"""Constants for the TRIAS integration."""
+"""Constants for the Uhrturm Transit integration."""
 
 from __future__ import annotations
 
 from datetime import timedelta
 from typing import Final
 
-DOMAIN: Final = "trias"
+DOMAIN: Final = "uhrturm_oepnv"
 
 # config entry
 CONF_REQUESTOR_REF: Final = "requestor_ref"

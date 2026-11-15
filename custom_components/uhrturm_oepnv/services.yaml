@@ -4,7 +4,7 @@ search_stops:
       required: true
       selector:
         config_entry:
-          integration: trias
+          integration: uhrturm_oepnv
     query:
       required: true
       example: "Hauptbahnhof"
@@ -24,7 +24,7 @@ get_departures:
       required: true
       selector:
         config_entry:
-          integration: trias
+          integration: uhrturm_oepnv
     stop:
       required: true
       example: "at:46:4131"
@@ -56,7 +56,7 @@ plan_trip:
       required: true
       selector:
         config_entry:
-          integration: trias
+          integration: uhrturm_oepnv
     origin:
       required: true
       example: "at:46:4131"

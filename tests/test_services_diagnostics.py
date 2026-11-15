@@ -11,7 +11,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.setup import async_setup_component
 
-from custom_components.trias.const import DOMAIN
+from custom_components.uhrturm_oepnv.const import DOMAIN
 
 from .conftest import NOW, setup_entry
 

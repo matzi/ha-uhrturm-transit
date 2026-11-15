@@ -6,10 +6,10 @@ from datetime import datetime, timedelta, UTC
 
 import pytest
 
-from custom_components.trias.api import parser
-from custom_components.trias.api.commute import Place, dedupe, make_option, pareto
-from custom_components.trias.api.exceptions import TriasApiError, TriasParseError
-from custom_components.trias.api.models import filter_departures, same_stop
+from custom_components.uhrturm_oepnv.api import parser
+from custom_components.uhrturm_oepnv.api.commute import Place, dedupe, make_option, pareto
+from custom_components.uhrturm_oepnv.api.exceptions import TriasApiError, TriasParseError
+from custom_components.uhrturm_oepnv.api.models import filter_departures, same_stop
 
 from .conftest import fixture
 
